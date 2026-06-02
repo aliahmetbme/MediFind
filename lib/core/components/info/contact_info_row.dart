@@ -1,6 +1,7 @@
 // lib/core/components/info/contact_info_row.dart
 
 import 'package:flutter/material.dart';
+import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
 
 /// A labelled info row for the provider detail screen.
@@ -51,7 +52,6 @@ class ContactInfoRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Padding(
@@ -76,7 +76,7 @@ class ContactInfoRow extends StatelessWidget {
                   style: textTheme.labelSmall?.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant,
+                    color: AppColors.textSecondary,
                     letterSpacing: 0.4,
                   ),
                 ),
@@ -87,7 +87,7 @@ class ContactInfoRow extends StatelessWidget {
                   style: textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
+                    color: AppColors.textMain,
                   ),
                 ),
               ],
@@ -107,19 +107,17 @@ class _IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       width: AppSizes.contactBadgeSize,
       height: AppSizes.contactBadgeSize,
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.08),
+        color: AppColors.primary.withValues(alpha: 0.08),
         shape: BoxShape.circle,
       ),
       child: Icon(
         icon,
         size: AppSizes.contactBadgeIconSize,
-        color: colorScheme.primary,
+        color: AppColors.primary,
       ),
     );
   }

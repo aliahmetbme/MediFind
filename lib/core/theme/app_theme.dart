@@ -21,25 +21,36 @@ abstract final class AppTheme {
 
   /// Returns a fully composed [ThemeData] for light mode.
   static ThemeData get lightTheme {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.light,
-      primary: AppColors.primary,
-      surface: AppColors.surface,
-      onPrimary: AppColors.onPrimary,
-      onSurface: AppColors.textMain,
-      error: AppColors.error,
-      errorContainer: AppColors.errorSurface,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.light,
+          primary: AppColors.primary,
+          surface: AppColors.surface,
+          onPrimary: AppColors.onPrimary,
+          onSurface: AppColors.textMain,
+          error: AppColors.error,
+          errorContainer: AppColors.errorSurface,
+        ).copyWith(
+          primaryContainer: AppColors.primarySurface,
+          onPrimaryContainer: AppColors.primary,
+          secondary: AppColors.textSecondary,
+          onSecondary: AppColors.onPrimary,
+          surfaceContainerHighest: AppColors.mutedSurface,
+          onSurfaceVariant: AppColors.textSecondary,
+          outline: AppColors.placeholderIcon,
+          outlineVariant: AppColors.border,
+          shadow: AppColors.shadowMedium,
+        );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,
       textTheme: _lightTypography.textTheme,
-      elevatedButtonTheme: _buildElevatedButtonTheme(colorScheme, _lightTypography),
-      cardTheme: _buildCardTheme(colorScheme),
-      appBarTheme: _buildAppBarTheme(colorScheme, _lightTypography),
+      elevatedButtonTheme: _buildElevatedButtonTheme(_lightTypography),
+      cardTheme: _buildCardTheme(),
+      appBarTheme: _buildAppBarTheme(_lightTypography),
     );
   }
 
@@ -52,16 +63,29 @@ abstract final class AppTheme {
       brightness: Brightness.dark,
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
+      primaryContainer: AppColors.primarySurface,
+      onPrimaryContainer: AppColors.primary,
+      secondary: AppColors.textSecondary,
+      onSecondary: AppColors.onPrimary,
+      surface: AppColors.surface,
+      onSurface: AppColors.textMain,
+      surfaceContainerHighest: AppColors.mutedSurface,
+      onSurfaceVariant: AppColors.textSecondary,
+      outline: AppColors.placeholderIcon,
+      outlineVariant: AppColors.border,
+      shadow: AppColors.shadowMedium,
       error: AppColors.error,
+      errorContainer: AppColors.errorSurface,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      scaffoldBackgroundColor: AppColors.background,
       textTheme: _darkTypography.textTheme,
-      elevatedButtonTheme: _buildElevatedButtonTheme(colorScheme, _darkTypography),
-      cardTheme: _buildCardTheme(colorScheme),
-      appBarTheme: _buildAppBarTheme(colorScheme, _darkTypography),
+      elevatedButtonTheme: _buildElevatedButtonTheme(_darkTypography),
+      cardTheme: _buildCardTheme(),
+      appBarTheme: _buildAppBarTheme(_darkTypography),
     );
   }
 
@@ -69,52 +93,42 @@ abstract final class AppTheme {
 
   /// ElevatedButton Theme Configuration driven by theme ColorScheme and Typography.
   static ElevatedButtonThemeData _buildElevatedButtonTheme(
-    ColorScheme colorScheme,
     AppTypography typography,
   ) {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         elevation: AppSizes.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.borderMedium,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.borderMedium),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.extraLarge,
           vertical: AppSizes.buttonVerticalPadding,
         ),
-        textStyle: typography.labelLarge.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: typography.labelLarge.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
 
   /// Card Theme Configuration driven by theme ColorScheme and Design Tokens.
-  static CardThemeData _buildCardTheme(ColorScheme colorScheme) {
+  static CardThemeData _buildCardTheme() {
     return CardThemeData(
-      color: colorScheme.surface,
+      color: AppColors.surface,
       elevation: 2.0,
-      shadowColor: colorScheme.onSurface.withValues(alpha: 0.08),
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.borderLarge,
-      ),
+      shadowColor: AppColors.textMain.withValues(alpha: 0.08),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.borderLarge),
     );
   }
 
   /// AppBar Theme Configuration driven by theme ColorScheme and Design Tokens.
-  static AppBarTheme _buildAppBarTheme(
-    ColorScheme colorScheme,
-    AppTypography typography,
-  ) {
+  static AppBarTheme _buildAppBarTheme(AppTypography typography) {
     return AppBarTheme(
-      backgroundColor: colorScheme.surface,
-      foregroundColor: colorScheme.onSurface,
+      backgroundColor: AppColors.surface,
+      foregroundColor: AppColors.textMain,
       elevation: AppSizes.zero,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: AppColors.transparent,
       titleTextStyle: typography.titleLarge.copyWith(
-        color: colorScheme.onSurface,
+        color: AppColors.textMain,
         fontWeight: FontWeight.w700,
       ),
     );

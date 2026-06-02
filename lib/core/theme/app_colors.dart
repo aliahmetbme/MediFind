@@ -5,7 +5,7 @@
 // It is intentionally non-instantiable – all members are static constants.
 //
 // ── Design rule ───────────────────────────────────────────────────────────────
-// NO dependency on package:flutter/material.dart Colors.* constants.
+// NO dependency on package:flutter/material.dart material color constants.
 // Every color is expressed as a self-contained hex literal so this file
 // compiles with zero framework color references.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -23,6 +23,12 @@ abstract final class AppColors {
   // ── Brand ────────────────────────────────────────────────────────────────
   /// Primary action / brand blue. Hex: #2563EB
   static const Color primary = Color(0xFF2563EB);
+
+  /// Pale brand surface used behind selected counters and soft primary callouts.
+  static const Color primarySurface = Color(0xFFEFF6FF);
+
+  /// Slightly stronger pale brand border / icon badge surface.
+  static const Color primarySurfaceStrong = Color(0xFFDBEAFE);
 
   // ── Backgrounds ──────────────────────────────────────────────────────────
   /// Scaffold / page background. Hex: #FAFAFA
@@ -68,8 +74,10 @@ abstract final class AppColors {
   static const Color shadowMedium = Color(0x1A000000);
 
   // ── Semantic onColor tokens ──────────────────────────────────────────────────
+  static const Color transparent = Color(0x00000000);
+
   /// Full-white foreground used on [primary]-colored surfaces.
-  /// Expressed as a hex literal — NO dependency on Colors.white.
+  /// Expressed as a hex literal — no dependency on framework white constants.
   static const Color onPrimary = Color(0xFFFFFFFF);
 
   /// 70%-opacity white foreground used on dark surfaces (e.g. dark AppTypography).

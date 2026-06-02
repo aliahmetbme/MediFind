@@ -31,7 +31,6 @@ class ProviderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final rating = this.rating;
 
@@ -43,15 +42,15 @@ class ProviderCard extends StatelessWidget {
           vertical: AppSizes.cardVerticalMargin,
         ),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: AppColors.surface,
           borderRadius: AppRadius.borderLarge,
           border: Border.all(
-            color: colorScheme.outlineVariant,
+            color: AppColors.border,
             width: AppSizes.borderThin,
           ),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: 0.04),
+              color: AppColors.shadowMedium.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -77,7 +76,7 @@ class ProviderCard extends StatelessWidget {
                             style: textTheme.bodyMedium?.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
+                              color: AppColors.textMain,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -95,7 +94,7 @@ class ProviderCard extends StatelessWidget {
                       style: textTheme.bodySmall?.copyWith(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: colorScheme.primary,
+                        color: AppColors.primary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -106,7 +105,7 @@ class ProviderCard extends StatelessWidget {
                         Icon(
                           Icons.location_on_outlined,
                           size: AppSizes.iconSmall - 2.0,
-                          color: colorScheme.onSurfaceVariant,
+                          color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: AppSizes.miniSpacing),
                         Expanded(
@@ -115,7 +114,7 @@ class ProviderCard extends StatelessWidget {
                             style: textTheme.bodySmall?.copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              color: colorScheme.onSurfaceVariant,
+                              color: AppColors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -170,13 +169,15 @@ class _AvatarPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Semantics(
       label: 'Provider profile photo placeholder',
       child: Container(
-        color: colorScheme.surfaceContainerHighest,
-        child: Icon(Icons.person, size: 36, color: colorScheme.outline),
+        color: AppColors.mutedSurface,
+        child: const Icon(
+          Icons.person,
+          size: 36,
+          color: AppColors.placeholderIcon,
+        ),
       ),
     );
   }
@@ -189,7 +190,6 @@ class _RatingBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Row(
@@ -202,7 +202,7 @@ class _RatingBadge extends StatelessWidget {
           style: textTheme.bodySmall?.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
+            color: AppColors.textMain,
           ),
         ),
       ],

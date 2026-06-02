@@ -40,7 +40,7 @@ class FilterChipWidget extends StatelessWidget {
   // ── Derived style values ──────────────────────────────────────────────────
 
   Color get _backgroundColor =>
-      isSelected ? AppColors.primary : Colors.transparent;
+      isSelected ? AppColors.primary : AppColors.transparent;
 
   Color get _labelColor =>
       isSelected ? AppColors.onPrimary : AppColors.textSecondary;

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:medifinder/core/components/buttons/app_button.dart';
+import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
 
 /// Reusable empty-state presentation for valid zero-result outcomes.
@@ -24,7 +25,6 @@ class AppEmptyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     final actionText = this.actionText;
@@ -40,13 +40,13 @@ class AppEmptyWidget extends StatelessWidget {
               width: AppSizes.stateIconContainerSize,
               height: AppSizes.stateIconContainerSize,
               decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: AppSizes.stateIconSize,
-                color: colorScheme.primary,
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: AppSizes.stateWidgetSpacingTitle),
@@ -54,7 +54,7 @@ class AppEmptyWidget extends StatelessWidget {
               title,
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: colorScheme.onSurface,
+                color: AppColors.textMain,
               ),
               textAlign: TextAlign.center,
             ),
@@ -62,7 +62,7 @@ class AppEmptyWidget extends StatelessWidget {
             Text(
               message,
               style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.7),
+                color: AppColors.textMain.withValues(alpha: 0.7),
                 height: 1.5,
               ),
               textAlign: TextAlign.center,

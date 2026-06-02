@@ -78,7 +78,9 @@ class _ProviderDetailViewState extends State<ProviderDetailView> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _detailState = const ResourceError('Something went wrong. Please go back and try again.');
+        _detailState = const ResourceError(
+          'Something went wrong. Please go back and try again.',
+        );
       });
     }
   }
@@ -94,112 +96,108 @@ class _ProviderDetailViewState extends State<ProviderDetailView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     final child = switch (_detailState) {
       ResourceInitial() || ResourceLoading() => Scaffold(
-          key: const ValueKey('loading'),
-          backgroundColor: colorScheme.surface,
-          body: Stack(
-            children: [
-              const AppLoadingWidget(),
-              _FloatingBackButton(onBack: _handleBack),
-            ],
-          ),
+        key: const ValueKey('loading'),
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            const AppLoadingWidget(),
+            _FloatingBackButton(onBack: _handleBack),
+          ],
         ),
+      ),
       ResourceError(:final message) => Scaffold(
-          key: const ValueKey('error'),
-          backgroundColor: colorScheme.surface,
-          body: Stack(
-            children: [
-              if (message == 'Provider not found.')
-                AppEmptyWidget(
-                  title: 'Provider Not Found',
-                  message: message,
-                  icon: Icons.person_off_rounded,
-                  actionText: 'Go Back',
-                  onAction: _handleBack,
-                )
-              else
-                AppErrorWidget(
-                  title: 'Something Went Wrong',
-                  message: message,
-                  actionText: 'Go Back',
-                  onAction: _handleBack,
-                ),
-              _FloatingBackButton(onBack: _handleBack),
-            ],
-          ),
-        ),
-      ResourceEmpty() => Scaffold(
-          key: const ValueKey('empty'),
-          backgroundColor: colorScheme.surface,
-          body: Stack(
-            children: [
+        key: const ValueKey('error'),
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            if (message == 'Provider not found.')
               AppEmptyWidget(
                 title: 'Provider Not Found',
-                message: 'No provider details available.',
+                message: message,
                 icon: Icons.person_off_rounded,
                 actionText: 'Go Back',
                 onAction: _handleBack,
+              )
+            else
+              AppErrorWidget(
+                title: 'Something Went Wrong',
+                message: message,
+                actionText: 'Go Back',
+                onAction: _handleBack,
               ),
-              _FloatingBackButton(onBack: _handleBack),
-            ],
-          ),
+            _FloatingBackButton(onBack: _handleBack),
+          ],
         ),
+      ),
+      ResourceEmpty() => Scaffold(
+        key: const ValueKey('empty'),
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            AppEmptyWidget(
+              title: 'Provider Not Found',
+              message: 'No provider details available.',
+              icon: Icons.person_off_rounded,
+              actionText: 'Go Back',
+              onAction: _handleBack,
+            ),
+            _FloatingBackButton(onBack: _handleBack),
+          ],
+        ),
+      ),
       ResourceSuccess(:final data) => Scaffold(
-          key: const ValueKey('success'),
-          backgroundColor: colorScheme.surface,
-          body: Stack(
-            children: [
-              SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: AppSizes.extraLarge),
-                child: Stack(
-                  children: [
-                    _CoverImage(provider: data),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: AppSizes.detailProfileCardOffset,
-                        left: AppSizes.large,
-                        right: AppSizes.large,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _ProfileInfoCard(
+        key: const ValueKey('success'),
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: AppSizes.extraLarge),
+              child: Stack(
+                children: [
+                  _CoverImage(provider: data),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: AppSizes.detailProfileCardOffset,
+                      left: AppSizes.large,
+                      right: AppSizes.large,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _ProfileInfoCard(provider: data, textTheme: textTheme),
+                        const SizedBox(height: AppSizes.extraLarge),
+                        _ContactCard(provider: data, textTheme: textTheme),
+                        if (data.about case final about?
+                            when about.trim().isNotEmpty) ...[
+                          const SizedBox(height: AppSizes.extraLarge),
+                          _BioCard(
+                            provider: data,
+                            about: about,
+                            textTheme: textTheme,
+                          ),
+                        ],
+                        if (data.availableDays.isNotEmpty) ...[
+                          const SizedBox(height: AppSizes.extraLarge),
+                          _AvailabilityCard(
                             provider: data,
                             textTheme: textTheme,
                           ),
-                          const SizedBox(height: AppSizes.extraLarge),
-                          _ContactCard(provider: data, textTheme: textTheme),
-                          if (data.about case final about?
-                              when about.trim().isNotEmpty) ...[
-                            const SizedBox(height: AppSizes.extraLarge),
-                            _BioCard(
-                              provider: data,
-                              about: about,
-                              textTheme: textTheme,
-                            ),
-                          ],
-                          if (data.availableDays.isNotEmpty) ...[
-                            const SizedBox(height: AppSizes.extraLarge),
-                            _AvailabilityCard(
-                              provider: data,
-                              textTheme: textTheme,
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              _FloatingBackButton(onBack: _handleBack),
-            ],
-          ),
-          bottomNavigationBar: const _BookingStickyContainer(),
+            ),
+            _FloatingBackButton(onBack: _handleBack),
+          ],
         ),
+        bottomNavigationBar: const _BookingStickyContainer(),
+      ),
     };
 
     return AnimatedSwitcher(
@@ -217,7 +215,6 @@ class _CoverImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final imageUrl = provider.imageUrl;
 
     return SizedBox(
@@ -234,26 +231,24 @@ class _CoverImage extends StatelessWidget {
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
                     placeholder: (context, url) => Container(
-                      color: colorScheme.surfaceContainerHighest,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      color: AppColors.mutedSurface,
+                      child: const Center(child: CircularProgressIndicator()),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      color: colorScheme.surfaceContainerHighest,
+                      color: AppColors.mutedSurface,
                       child: Icon(
                         Icons.medical_services_rounded,
                         size: AppSizes.stateIconContainerSize,
-                        color: colorScheme.outline,
+                        color: AppColors.placeholderIcon,
                       ),
                     ),
                   )
                 : Container(
-                    color: colorScheme.surfaceContainerHighest,
+                    color: AppColors.mutedSurface,
                     child: Icon(
                       Icons.medical_services_rounded,
                       size: AppSizes.stateIconContainerSize,
-                      color: colorScheme.outline,
+                      color: AppColors.placeholderIcon,
                     ),
                   ),
           ),
@@ -264,10 +259,14 @@ class _CoverImage extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    colorScheme.shadow.withValues(alpha: AppSizes.detailImageGradientTopStop),
-                    Colors.transparent,
-                    Colors.transparent,
-                    colorScheme.shadow.withValues(alpha: AppSizes.detailImageGradientBottomStop),
+                    AppColors.shadowMedium.withValues(
+                      alpha: AppSizes.detailImageGradientTopStop,
+                    ),
+                    AppColors.transparent,
+                    AppColors.transparent,
+                    AppColors.shadowMedium.withValues(
+                      alpha: AppSizes.detailImageGradientBottomStop,
+                    ),
                   ],
                   stops: const [0.0, 0.25, 0.6, 1.0],
                 ),
@@ -286,18 +285,15 @@ class _BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Container(
       padding: const EdgeInsets.all(AppSizes.extraLarge),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: AppColors.surface,
         borderRadius: AppRadius.borderLarge,
-        border: Border.all(color: colorScheme.outlineVariant, width: AppSizes.borderThin),
+        border: Border.all(color: AppColors.border, width: AppSizes.borderThin),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.04),
+            color: AppColors.shadowMedium.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -315,7 +311,6 @@ class _ProfileInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final rating = provider.rating;
 
     return _BaseCard(
@@ -329,14 +324,14 @@ class _ProfileInfoCard extends StatelessWidget {
                 vertical: AppSizes.extraSmall,
               ),
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: AppColors.primarySurface,
                 borderRadius: AppRadius.borderMax,
               ),
               child: Text(
                 'BOARD CERTIFIED',
                 style: textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: colorScheme.primary,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -349,9 +344,7 @@ class _ProfileInfoCard extends StatelessWidget {
           const SizedBox(height: AppSizes.small),
           Text(
             provider.role,
-            style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.primary,
-            ),
+            style: textTheme.titleMedium?.copyWith(color: AppColors.primary),
           ),
           const SizedBox(height: AppSizes.medium),
           Row(
@@ -360,14 +353,14 @@ class _ProfileInfoCard extends StatelessWidget {
               Icon(
                 Icons.location_on_rounded,
                 size: AppSizes.iconSmall,
-                color: colorScheme.onSurfaceVariant,
+                color: AppColors.textSecondary,
               ),
               const SizedBox(width: AppSizes.small),
               Expanded(
                 child: Text(
                   '${provider.city}${provider.hospital != null ? ' • ${provider.hospital}' : ''}',
                   style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -398,15 +391,12 @@ class _ProfileInfoCard extends StatelessWidget {
                   );
                 }),
                 const SizedBox(width: AppSizes.small),
-                Text(
-                  rating.toStringAsFixed(1),
-                  style: textTheme.titleMedium,
-                ),
+                Text(rating.toStringAsFixed(1), style: textTheme.titleMedium),
                 if (provider.reviewCount != null)
                   Text(
                     ' (${provider.reviewCount} Reviews)',
                     style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: AppColors.textSecondary,
                     ),
                   ),
               ],
@@ -425,7 +415,6 @@ class _ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final phone = provider.phone;
     final email = provider.email;
 
@@ -451,7 +440,7 @@ class _ContactCard extends StatelessWidget {
             Text(
               'No contact information available.',
               style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                color: AppColors.textSecondary,
               ),
             ),
         ],
@@ -473,8 +462,6 @@ class _BioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return _BaseCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,13 +474,15 @@ class _BioCard extends StatelessWidget {
           Text(
             about,
             style: textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: AppColors.textSecondary,
               height: 1.6,
             ),
           ),
           if (provider.specialties.isNotEmpty) ...[
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSizes.stateWidgetSpacingTitle),
+              padding: EdgeInsets.symmetric(
+                vertical: AppSizes.stateWidgetSpacingTitle,
+              ),
               child: Divider(height: AppSizes.dividerHeight),
             ),
             Text('Specialties', style: textTheme.titleMedium),
@@ -508,14 +497,14 @@ class _BioCard extends StatelessWidget {
                     vertical: AppSizes.small,
                   ),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
+                    color: AppColors.mutedSurface,
                     borderRadius: AppRadius.borderMax,
-                    border: Border.all(color: colorScheme.outlineVariant, width: AppSizes.borderThin),
+                    border: Border.all(
+                      color: AppColors.border,
+                      width: AppSizes.borderThin,
+                    ),
                   ),
-                  child: Text(
-                    s.displayName,
-                    style: textTheme.labelMedium,
-                  ),
+                  child: Text(s.displayName, style: textTheme.labelMedium),
                 );
               }).toList(),
             ),
@@ -533,8 +522,6 @@ class _AvailabilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return _BaseCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,14 +534,14 @@ class _AvailabilityCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.bolt_rounded,
-                    color: colorScheme.primary,
+                    color: AppColors.primary,
                     size: AppSizes.iconSmall,
                   ),
                   const SizedBox(width: AppSizes.extraSmall),
                   Text(
                     'Instant Booking',
                     style: textTheme.labelLarge?.copyWith(
-                      color: colorScheme.primary,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -573,14 +560,17 @@ class _AvailabilityCard extends StatelessWidget {
                     vertical: AppSizes.medium,
                   ),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
+                    color: AppColors.mutedSurface,
                     borderRadius: AppRadius.borderMedium,
-                    border: Border.all(color: colorScheme.outlineVariant, width: AppSizes.borderThin),
+                    border: Border.all(
+                      color: AppColors.border,
+                      width: AppSizes.borderThin,
+                    ),
                   ),
                   child: Text(
                     day.toUpperCase(),
                     style: textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 );
@@ -599,9 +589,6 @@ class _FloatingBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Positioned(
       top: 0,
       left: 0,
@@ -610,11 +597,11 @@ class _FloatingBackButton extends StatelessWidget {
           padding: const EdgeInsets.all(AppSizes.large),
           child: Container(
             decoration: BoxDecoration(
-              color: colorScheme.surface.withValues(alpha: 0.9),
+              color: AppColors.surface.withValues(alpha: 0.9),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.1),
+                  color: AppColors.shadowMedium.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -623,7 +610,7 @@ class _FloatingBackButton extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 Icons.arrow_back_rounded,
-                color: colorScheme.primary,
+                color: AppColors.primary,
                 size: 22,
               ),
               onPressed: onBack,
@@ -640,9 +627,6 @@ class _BookingStickyContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppSizes.extraLarge,
@@ -651,16 +635,13 @@ class _BookingStickyContainer extends StatelessWidget {
         AppSizes.huge,
       ),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: AppColors.background,
         border: Border(
-          top: BorderSide(
-            color: colorScheme.outlineVariant,
-            width: AppSizes.borderThin,
-          ),
+          top: BorderSide(color: AppColors.border, width: AppSizes.borderThin),
         ),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.04),
+            color: AppColors.shadowMedium.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),

@@ -1,6 +1,7 @@
 // lib/core/components/buttons/app_button.dart
 
 import 'package:flutter/material.dart';
+import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
 
 /// Reusable button component for MediFinder.
@@ -51,12 +52,13 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     // Resolve border radius — use token default if caller did not supply one.
     final effectiveRadius = borderRadius ?? AppRadius.medium;
-    final buttonBorderRadius = BorderRadius.all(Radius.circular(effectiveRadius));
+    final buttonBorderRadius = BorderRadius.all(
+      Radius.circular(effectiveRadius),
+    );
 
     // Determine explicit interactive state
     final isButtonDisabled = isDisabled || onPressed == null || isLoading;
@@ -70,28 +72,26 @@ class AppButton extends StatelessWidget {
           child: ElevatedButton(
             onPressed: activeOnPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              disabledBackgroundColor: colorScheme.primary.withValues(alpha: 0.6),
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.onPrimary,
+              disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
               elevation: AppSizes.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: buttonBorderRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: buttonBorderRadius),
             ),
             child: isLoading
-                ? _LoadingIndicator(color: colorScheme.onPrimary)
+                ? _LoadingIndicator(color: AppColors.onPrimary)
                 : Text(
                     text,
                     style: textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onPrimary,
+                      color: AppColors.onPrimary,
                     ),
                   ),
           ),
         );
 
       case _ButtonVariant.outlined:
-        final activeColor = colorScheme.primary;
+        const activeColor = AppColors.primary;
         final disabledColor = activeColor.withValues(alpha: 0.5);
 
         return SizedBox(
@@ -101,15 +101,13 @@ class AppButton extends StatelessWidget {
             onPressed: activeOnPressed,
             style: OutlinedButton.styleFrom(
               foregroundColor: activeColor,
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppColors.transparent,
               disabledForegroundColor: disabledColor,
               side: BorderSide(
                 color: isButtonDisabled ? disabledColor : activeColor,
                 width: AppSizes.buttonBorderWidth,
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: buttonBorderRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: buttonBorderRadius),
             ),
             child: isLoading
                 ? _LoadingIndicator(color: activeColor)

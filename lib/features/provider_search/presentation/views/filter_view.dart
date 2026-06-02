@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:medifinder/core/router/app_router.dart';
 import 'package:medifinder/core/components/buttons/app_button.dart';
 import 'package:medifinder/core/components/chips/filter_chip_widget.dart';
+import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enums.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enum_extensions.dart';
@@ -125,16 +126,12 @@ class _FilterViewState extends State<FilterView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final viewModel = context.watch<ProviderListViewModel>();
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: AppColors.background,
       resizeToAvoidBottomInset: false,
-      appBar: _FilterAppBar(
-        draftCount: _draft.totalCount,
-      ),
+      appBar: _FilterAppBar(draftCount: _draft.totalCount),
       body: Column(
         children: [
           Expanded(
@@ -170,16 +167,15 @@ class _FilterAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return AppBar(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: AppColors.surface,
       elevation: 0,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: AppColors.transparent,
       centerTitle: false,
       leading: IconButton(
-        icon: Icon(Icons.close_rounded, color: colorScheme.onSurfaceVariant),
+        icon: Icon(Icons.close_rounded, color: AppColors.textSecondary),
         tooltip: 'Close filters',
         onPressed: () => context.pop(),
       ),
@@ -195,13 +191,13 @@ class _FilterAppBar extends StatelessWidget implements PreferredSizeWidget {
                   vertical: AppSizes.extraSmall,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
+                  color: AppColors.primarySurface,
                   borderRadius: AppRadius.borderMax,
                 ),
                 child: Text(
                   '$draftCount selected',
                   style: textTheme.labelMedium?.copyWith(
-                    color: colorScheme.primary,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -211,7 +207,10 @@ class _FilterAppBar extends StatelessWidget implements PreferredSizeWidget {
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(AppSizes.dividerHeight),
-        child: Container(height: AppSizes.dividerHeight, color: colorScheme.outlineVariant),
+        child: Container(
+          height: AppSizes.dividerHeight,
+          color: AppColors.border,
+        ),
       ),
     );
   }
@@ -235,18 +234,16 @@ class _FilterScrollBody extends StatelessWidget {
   final void Function(ProviderSpecialty) onToggleSpecialty;
 
   Widget _buildFilterCard(BuildContext context, {required Widget child}) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSizes.large),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: AppColors.surface,
         borderRadius: AppRadius.borderLarge,
-        border: Border.all(color: colorScheme.outlineVariant, width: AppSizes.borderThin),
+        border: Border.all(color: AppColors.border, width: AppSizes.borderThin),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.04),
+            color: AppColors.shadowMedium.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -260,16 +257,20 @@ class _FilterScrollBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(AppSizes.large, AppSizes.extraLarge, AppSizes.large, AppSizes.large),
+      padding: const EdgeInsets.fromLTRB(
+        AppSizes.large,
+        AppSizes.extraLarge,
+        AppSizes.large,
+        AppSizes.large,
+      ),
       children: [
         Text('Find your specialist', style: textTheme.headlineSmall),
         const SizedBox(height: AppSizes.extraSmall),
         Text(
           'Tailor your search with precise medical filters.',
-          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+          style: textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSizes.extraLarge),
         _buildFilterCard(
@@ -308,9 +309,7 @@ class _FilterScrollBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSizes.stateWidgetSpacingTitle),
-        _ResultPreviewCard(
-          draftCount: draft.totalCount,
-        ),
+        _ResultPreviewCard(draftCount: draft.totalCount),
       ],
     );
   }
@@ -330,7 +329,6 @@ class _CountryFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Column(
@@ -338,11 +336,7 @@ class _CountryFilterSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.public_rounded,
-              size: 20,
-              color: colorScheme.primary,
-            ),
+            Icon(Icons.public_rounded, size: 20, color: AppColors.primary),
             const SizedBox(width: AppSizes.small),
             Text('Country', style: textTheme.titleMedium),
           ],
@@ -353,7 +347,9 @@ class _CountryFilterSection extends StatelessWidget {
             padding: const EdgeInsets.only(top: AppSizes.small),
             child: Text(
               'No country options available.',
-              style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+              style: textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           )
         else
@@ -387,7 +383,6 @@ class _CityFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Column(
@@ -398,7 +393,7 @@ class _CityFilterSection extends StatelessWidget {
             Icon(
               Icons.location_city_rounded,
               size: 20,
-              color: colorScheme.primary,
+              color: AppColors.primary,
             ),
             const SizedBox(width: AppSizes.small),
             Text('City', style: textTheme.titleMedium),
@@ -410,7 +405,9 @@ class _CityFilterSection extends StatelessWidget {
             padding: const EdgeInsets.only(top: AppSizes.small),
             child: Text(
               'No city options available.',
-              style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+              style: textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           )
         else
@@ -444,7 +441,6 @@ class _SpecialtyFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Column(
@@ -455,7 +451,7 @@ class _SpecialtyFilterSection extends StatelessWidget {
             Icon(
               Icons.local_hospital_rounded,
               size: 20,
-              color: colorScheme.primary,
+              color: AppColors.primary,
             ),
             const SizedBox(width: AppSizes.small),
             Text('Specialty', style: textTheme.titleMedium),
@@ -479,24 +475,21 @@ class _SpecialtyFilterSection extends StatelessWidget {
 }
 
 class _ResultPreviewCard extends StatelessWidget {
-  const _ResultPreviewCard({
-    required this.draftCount,
-  });
+  const _ResultPreviewCard({required this.draftCount});
   final int draftCount;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.stateWidgetSpacingTitle),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.06),
+        color: AppColors.primarySurface,
         borderRadius: AppRadius.borderLarge,
         border: Border.all(
-          color: colorScheme.primary.withValues(alpha: 0.15),
+          color: AppColors.primarySurfaceStrong,
           width: AppSizes.borderThin,
         ),
       ),
@@ -506,12 +499,12 @@ class _ResultPreviewCard extends StatelessWidget {
             width: AppSizes.contactBadgeSize,
             height: AppSizes.contactBadgeSize,
             decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.12),
+              color: AppColors.primarySurfaceStrong,
               borderRadius: AppRadius.borderMedium,
             ),
             child: Icon(
               Icons.people_alt_rounded,
-              color: colorScheme.primary,
+              color: AppColors.primary,
               size: AppSizes.iconMedium,
             ),
           ),
@@ -525,7 +518,7 @@ class _ResultPreviewCard extends StatelessWidget {
                       ? 'No filters active'
                       : '$draftCount filter${draftCount > 1 ? 's' : ''} selected',
                   style: textTheme.titleSmall?.copyWith(
-                    color: colorScheme.primary,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -535,7 +528,7 @@ class _ResultPreviewCard extends StatelessWidget {
                       ? 'Tap the chips above to narrow results.'
                       : 'Tap "Apply Selection" to see matching specialists.',
                   style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -560,9 +553,6 @@ class _StickyActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Container(
       padding: EdgeInsets.fromLTRB(
         AppSizes.large,
@@ -571,11 +561,13 @@ class _StickyActionBar extends StatelessWidget {
         MediaQuery.paddingOf(context).bottom + AppSizes.medium,
       ),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border(top: BorderSide(color: colorScheme.outlineVariant, width: AppSizes.borderThin)),
+        color: AppColors.background,
+        border: Border(
+          top: BorderSide(color: AppColors.border, width: AppSizes.borderThin),
+        ),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.04),
+            color: AppColors.shadowMedium.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
