@@ -1,3 +1,4 @@
+# MediFinder
 ### **Mimari Yaklaşım ve Teknik Kararlar**
 
 Bu proje, sürdürülebilir ve üretim kalitesine yakın kod standartlarını karşılamak amacıyla Clean Architecture ve Feature-based MVVM prensipleriyle kurgulanmıştır. State yönetimi ve bağımlılık enjeksiyonu standart modern araçlarla kurgulanmış; veri akışı ise tip güvenli bir durum (state) yapısıyla güvence altına alınarak arayüzdeki belirsizlikler önlenmiştir.  
@@ -106,7 +107,7 @@ Bu yaklaşım, sadece bir arayüz inşa etmenin ötesinde, ölçeklenebilir ve u
 
 ![Main Flow & Detail Screens](lib/core/screenshots/2.png)
 
-### Uygulama Videosu
+### MediFinder - Mobile Engineer Case Study Demo - Screen video record 
 
 Uygulamanın arayüz kalitesini, mikro-etkileşimlerini, hata ve asenkron durum (state) yönetimini (Shimmer Loading, Empty State, Offline Retry) gösteren kısa bir demo videosuna aşağıdan ulaşabilirsiniz.
 
