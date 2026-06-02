@@ -61,7 +61,7 @@ class ProviderListView extends StatelessWidget {
           key: ValueKey('loading'),
         ),
         ResourceSuccess(:final data) => _ProviderList(
-          key: const ValueKey('success'),
+          key: ValueKey('success_${data.length}'),
           providers: data,
         ),
         ResourceEmpty() => AppEmptyWidget(
@@ -116,7 +116,7 @@ class _MediFinderAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Icon(
               Icons.local_hospital_rounded,
               color: AppColors.onPrimary,
-              size: 18,
+              size: AppSizes.appBarIconBadgeSize,
             ),
           ),
           const SizedBox(width: AppSizes.spacingBadgeText),
@@ -221,7 +221,7 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+      _controller = TextEditingController(text: context.read<ProviderListViewModel>().query);
   }
 
   @override
@@ -233,6 +233,12 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final viewModel = context.watch<ProviderListViewModel>();
+
+    // Keep controller in sync with ViewModel query
+    if (viewModel.query != _controller.text) {
+      _controller.text = viewModel.query;
+    }
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -334,7 +340,6 @@ class _ProviderList extends StatelessWidget {
             context.pushNamed(
               AppRoute.providerDetail.name,
               pathParameters: {'id': provider.id},
-              extra: provider,
             );
           },
         );

@@ -4,24 +4,43 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:medifinder/core/network/app_error_mapper.dart';
+import 'package:medifinder/features/provider_search/domain/services/i_error_mapper.dart';
+import 'package:medifinder/features/provider_search/domain/repositories/i_provider_repository.dart';
 import 'package:medifinder/core/network/resource_state.dart';
+import 'package:medifinder/core/services/id_debounce_service.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enums.dart';
 import 'package:medifinder/features/provider_search/domain/entities/filter_criteria.dart';
 import 'package:medifinder/features/provider_search/domain/entities/provider_entity.dart';
-import 'package:medifinder/features/provider_search/domain/repositories/i_provider_repository.dart';
 import 'package:medifinder/features/provider_search/domain/utils/filter_value_normalizer.dart';
+
+// Simple default error mapper used when no implementation is provided.
+class _DefaultErrorMapper implements IErrorMapper {
+  @override
+  String map(Object error) {
+    // Provide a user‑friendly message without leaking internal exception types.
+    final raw = error.toString();
+    // Strip common "Exception:" prefix and trim whitespace.
+    if (raw.toLowerCase().startsWith('exception:')) {
+      return raw.substring('Exception:'.length).trim();
+    }
+    return raw;
+  }
+}
 
 /// Presentation-layer ViewModel for the provider search / list screen.
 class ProviderListViewModel extends ChangeNotifier {
   ProviderListViewModel({
     required this.repository,
+    IErrorMapper? errorMapper,
     this.debounceDuration = const Duration(milliseconds: 350),
-  });
+    this.debounceService,
+  }) : errorMapper = errorMapper ?? _DefaultErrorMapper();
 
   // ── Dependencies ──────────────────────────────────────────────────────────
 
   final IProviderRepository repository;
+  final IErrorMapper errorMapper;
+  final IDebounceService? debounceService; // optional injection for testability
 
   /// Duration to wait after the last query change before fetching.
   final Duration debounceDuration;
@@ -62,13 +81,15 @@ class ProviderListViewModel extends ChangeNotifier {
         }
       }
     }
-    final options = uniqueCountries.map((countryValue) {
-      return FilterOption(
-        value: countryValue,
-        label: FilterValueNormalizer.formatCountry(countryValue),
-      );
-    }).toList()
-      ..sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+    final options =
+        uniqueCountries.map((countryValue) {
+          return FilterOption(
+            value: countryValue,
+            label: FilterValueNormalizer.formatCountry(countryValue),
+          );
+        }).toList()..sort(
+          (a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()),
+        );
 
     return UnmodifiableListView<FilterOption>(options);
   }
@@ -106,10 +127,12 @@ class ProviderListViewModel extends ChangeNotifier {
       }
     }
 
-    final options = cityMap.entries.map((entry) {
-      return FilterOption(value: entry.key, label: entry.value);
-    }).toList()
-      ..sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+    final options =
+        cityMap.entries.map((entry) {
+          return FilterOption(value: entry.key, label: entry.value);
+        }).toList()..sort(
+          (a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()),
+        );
 
     return UnmodifiableListView<FilterOption>(options);
   }
@@ -148,14 +171,10 @@ class ProviderListViewModel extends ChangeNotifier {
           : ResourceSuccess<List<ProviderEntity>>(immutableProviders);
     } on Exception catch (e) {
       if (_isDisposed) return;
-      _state = ResourceError<List<ProviderEntity>>(
-        AppErrorMapper.toUserMessage(e),
-      );
+      _state = ResourceError<List<ProviderEntity>>(errorMapper.map(e));
     } catch (e) {
       if (_isDisposed) return;
-      _state = ResourceError<List<ProviderEntity>>(
-        AppErrorMapper.toUserMessage(e),
-      );
+      _state = ResourceError<List<ProviderEntity>>(errorMapper.map(e));
     }
 
     _safeNotifyListeners();
@@ -171,8 +190,14 @@ class ProviderListViewModel extends ChangeNotifier {
     if (_query == newQuery) return;
     _query = newQuery;
 
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(debounceDuration, fetchProviders);
+    // Use injected debounce service if provided; otherwise fall back to internal timer.
+    if (debounceService != null) {
+      debounceService!.debounce(fetchProviders, debounceDuration);
+    } else {
+      // Cancel any existing timer and schedule a new one.
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(debounceDuration, () => fetchProviders());
+    }
   }
 
   /// Applies a new [FilterCriteria] from the filter screen and fetches.
@@ -195,10 +220,13 @@ class ProviderListViewModel extends ChangeNotifier {
       next.add(normalizedTarget);
     }
 
-    final allowedCities = cityOptionsForCountries(next).map((c) => c.value).toSet();
+    final allowedCities = cityOptionsForCountries(
+      next,
+    ).map((c) => c.value).toSet();
     final prunedCities = _criteria.selectedCities
         .where(
-          (city) => allowedCities.contains(FilterValueNormalizer.normalize(city)),
+          (city) =>
+              allowedCities.contains(FilterValueNormalizer.normalize(city)),
         )
         .toSet();
 

@@ -26,16 +26,17 @@ abstract final class AppSizes {
   static const double borderThin = 1.0;
   static const double borderMedium = 1.5;
   static const double dividerHeight = 1.0;
-  
+
   static const double appBarIconBadgeSize = 32.0;
   static const double filterBadgeSize = 28.0;
   static const double filterBadgeInnerMinSize = 16.0;
-  
+
   static const double detailCoverHeight = 400.0;
   static const double detailProfileCardOffset = 340.0;
   static const double avatarSize = 80.0;
-  static const double ratingStarSize = 20.0;
-  
+  // Updated to the new design token value (14.0) for rating stars
+
+
   static const double spacingBetweenSearchAndList = 12.0;
   static const double spacingBadgeText = 10.0;
   static const double detailImageGradientTopStop = 0.4;
@@ -58,9 +59,14 @@ abstract final class AppSizes {
   static const double iconSmall = 16.0;
   static const double iconMedium = 24.0;
   static const double iconLarge = 32.0;
+  // New design tokens for specific UI parts
+  static const double navIconSize = 22.0; // Navigation bar icons
+  static const double filterIconSize = 20.0; // Filter view icons
+  static const double badgeLabelSize = 10.0; // Badge label text size
+  static const double ratingStarSize = 14.0; // Rating star size (override)
+  static const double stateIconContainerSize = 36.0; // State widget icon container
 
   // ── State Widget Dimensions ──────────────────────────────────────────────
-  static const double stateIconContainerSize = 80.0;
   static const double stateIconSize = 36.0;
 
   // ── Skeleton Line Heights (mirrors AppTypography font sizes) ─────────────
@@ -71,14 +77,14 @@ abstract final class AppSizes {
   // ── State Widget Spacing ─────────────────────────────────────────────────
   // Named tokens replace arithmetic like AppSizes.large + 4.0 (= 20)
   // or AppSizes.extraLarge + 4.0 (= 28) at call sites.
-  static const double stateWidgetSpacingTitle  = 20.0; // large(16) + 4
+  static const double stateWidgetSpacingTitle = 20.0; // large(16) + 4
   static const double stateWidgetSpacingAction = 28.0; // extraLarge(24) + 4
 
   // ── Chip & Badge Dimensions ──────────────────────────────────────────────
   static const double chipPaddingHorizontal = 16.0; // = AppSizes.large
-  static const double chipPaddingVertical   = 8.0;  // = AppSizes.small
-  static const double contactBadgeSize      = 42.0; // icon badge in ContactInfoRow
-  static const double contactBadgeIconSize  = 20.0;
+  static const double chipPaddingVertical = 8.0; // = AppSizes.small
+  static const double contactBadgeSize = 42.0; // icon badge in ContactInfoRow
+  static const double contactBadgeIconSize = 20.0;
 }
 
 abstract final class AppRadius {

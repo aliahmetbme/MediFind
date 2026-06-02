@@ -1,9 +1,9 @@
 // lib/core/theme/app_typography.dart
 //
-// Typography system for the MediFinder design system.
-// Implements the "Composition" pattern: AppTheme consumes AppTypography
-// as a collaborator, pulling its [textTheme] property rather than inlining
-// TextStyle definitions directly inside AppTheme.
+// Typography system for the MediFinder design system. Implements the "Composition"
+// pattern: AppTheme consumes AppTypography as a collaborator, pulling its
+// [textTheme] property rather than inlining TextStyle definitions directly inside
+// AppTheme.
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -136,6 +136,27 @@ class AppTypography {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.4,
+  );
+
+  // ── Custom Tokens for Pixel‑Perfect UI ────────────────────────────────────
+
+  // Provider name (title‑like) – 15 px, bold
+  static const TextStyle providerName = TextStyle(
+    fontSize: 15.0,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textMain,
+  );
+
+  // Medium label – 13 px
+  static const TextStyle labelMediumCustom = TextStyle(
+    fontSize: 13.0,
+    color: AppColors.textSecondary,
+  );
+
+  // Small body – 11 px
+  static const TextStyle bodySmallCustom = TextStyle(
+    fontSize: 11.0,
+    color: AppColors.textSecondary,
   );
 
   // ── Composed TextTheme ────────────────────────────────────────────────────

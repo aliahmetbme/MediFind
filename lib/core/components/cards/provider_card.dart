@@ -1,12 +1,15 @@
 // lib/core/components/cards/provider_card.dart
 //
 // Card component that represents a single healthcare provider in a list.
-// Fully refactored to achieve 100% Multi-Theme Reactivity and strictly enforce Design Tokens.
+// Refactored to replace all hard‑coded numeric values with design tokens
+// from AppSizes, AppRadius, AppColors and AppTypography.
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
+import 'package:medifinder/core/theme/app_typography.dart';
+import 'package:medifinder/core/theme/app_shadows.dart';
 
 class ProviderCard extends StatelessWidget {
   const ProviderCard({
@@ -50,9 +53,9 @@ class ProviderCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadowMedium.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: AppColors.shadowMedium.withValues(alpha: AppShadows.alphaLow),
+              blurRadius: AppShadows.blurSmall,
+              offset: AppShadows.offsetSmall,
             ),
           ],
         ),
@@ -73,11 +76,7 @@ class ProviderCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             name,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textMain,
-                            ),
+                            style: AppTypography.providerName,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -91,11 +90,7 @@ class ProviderCard extends StatelessWidget {
                     const SizedBox(height: AppSizes.extraSmall),
                     Text(
                       specialty,
-                      style: textTheme.bodySmall?.copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primary,
-                      ),
+                      style: AppTypography.labelMediumCustom,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -104,7 +99,7 @@ class ProviderCard extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.location_on_outlined,
-                          size: AppSizes.iconSmall - 2.0,
+                          size: AppSizes.filterIconSize,
                           color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: AppSizes.miniSpacing),
@@ -195,7 +190,7 @@ class _RatingBadge extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.star_rounded, size: 14, color: AppColors.rating),
+        const Icon(Icons.star_rounded, size: AppSizes.ratingStarSize, color: AppColors.rating),
         const SizedBox(width: 2),
         Text(
           rating.toStringAsFixed(1),

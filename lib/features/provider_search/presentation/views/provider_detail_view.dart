@@ -15,6 +15,8 @@ import 'package:medifinder/core/components/info/contact_info_row.dart';
 import 'package:medifinder/core/components/states/app_empty_widget.dart';
 import 'package:medifinder/core/components/states/app_error_widget.dart';
 import 'package:medifinder/core/components/states/app_loading_widget.dart';
+import 'package:medifinder/core/theme/app_shadows.dart';
+import 'package:medifinder/core/theme/app_gradients.dart';
 import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enum_extensions.dart';
@@ -42,7 +44,8 @@ class _ProviderDetailViewState extends State<ProviderDetailView> {
   void initState() {
     super.initState();
     if (widget.cachedProvider != null) {
-      _detailState = ResourceSuccess(widget.cachedProvider!);
+      final provider = widget.cachedProvider!;
+      _detailState = ResourceSuccess(provider);
     } else {
       _loadProvider();
     }
@@ -110,45 +113,51 @@ class _ProviderDetailViewState extends State<ProviderDetailView> {
         ),
       ),
       ResourceError(:final message) => Scaffold(
-        key: const ValueKey('error'),
-        backgroundColor: AppColors.background,
-        body: Stack(
-          children: [
-            if (message == 'Provider not found.')
-              AppEmptyWidget(
-                title: 'Provider Not Found',
-                message: message,
-                icon: Icons.person_off_rounded,
-                actionText: 'Go Back',
-                onAction: _handleBack,
-              )
-            else
-              AppErrorWidget(
-                title: 'Something Went Wrong',
-                message: message,
-                actionText: 'Go Back',
-                onAction: _handleBack,
-              ),
-            _FloatingBackButton(onBack: _handleBack),
-          ],
-        ),
-      ),
+    key: const ValueKey('error'),
+    backgroundColor: AppColors.background,
+    body: Stack(
+      children: [
+        // Show specific not-found UI if the error indicates a missing provider.
+        if (message.toLowerCase().contains('not found'))
+          AppErrorWidget(
+            title: 'Provider Not Found',
+            message: message,
+            actionText: 'Go Back',
+            onAction: _handleBack,
+          )
+        else
+          AppErrorWidget(
+            title: 'Something Went Wrong',
+            message: message,
+            actionText: 'Retry',
+            onAction: () {
+              final vm = context.read<ProviderListViewModel>();
+              vm.fetchProviders();
+            },
+          ),
+        _FloatingBackButton(onBack: _handleBack),
+      ],
+    ),
+  ),
       ResourceEmpty() => Scaffold(
-        key: const ValueKey('empty'),
-        backgroundColor: AppColors.background,
-        body: Stack(
-          children: [
-            AppEmptyWidget(
-              title: 'Provider Not Found',
-              message: 'No provider details available.',
-              icon: Icons.person_off_rounded,
-              actionText: 'Go Back',
-              onAction: _handleBack,
-            ),
-            _FloatingBackButton(onBack: _handleBack),
-          ],
+          key: const ValueKey('empty'),
+          backgroundColor: AppColors.background,
+          body: Stack(
+            children: [
+              AppEmptyWidget(
+                title: 'No Results',
+                message: 'Try clearing filters.',
+                icon: Icons.search_off_rounded,
+                actionText: 'Clear Filters',
+                onAction: () {
+                  final vm = context.read<ProviderListViewModel>();
+                  vm.clearAll();
+                },
+              ),
+              _FloatingBackButton(onBack: _handleBack),
+            ],
+          ),
         ),
-      ),
       ResourceSuccess(:final data) => Scaffold(
         key: const ValueKey('success'),
         backgroundColor: AppColors.background,
@@ -268,7 +277,7 @@ class _CoverImage extends StatelessWidget {
                       alpha: AppSizes.detailImageGradientBottomStop,
                     ),
                   ],
-                  stops: const [0.0, 0.25, 0.6, 1.0],
+                  stops: AppGradients.detailImageStops,
                 ),
               ),
             ),
@@ -293,9 +302,9 @@ class _BaseCard extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: AppSizes.borderThin),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowMedium.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.shadowMedium.withValues(alpha: AppShadows.alphaLow),
+            blurRadius: AppShadows.blurMedium,
+            offset: AppShadows.offsetMedium,
           ),
         ],
       ),
@@ -601,9 +610,9 @@ class _FloatingBackButton extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.shadowMedium.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: AppColors.shadowMedium.withValues(alpha: AppShadows.alphaMedium),
+                  blurRadius: AppShadows.blurSmall,
+                  offset: AppShadows.offsetSmall,
                 ),
               ],
             ),
@@ -611,7 +620,7 @@ class _FloatingBackButton extends StatelessWidget {
               icon: Icon(
                 Icons.arrow_back_rounded,
                 color: AppColors.primary,
-                size: 22,
+                size: AppSizes.navIconSize,
               ),
               onPressed: onBack,
             ),
@@ -642,8 +651,8 @@ class _BookingStickyContainer extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowMedium.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+            blurRadius: AppShadows.blurLarge,
+            offset: AppShadows.offsetNegative,
           ),
         ],
       ),

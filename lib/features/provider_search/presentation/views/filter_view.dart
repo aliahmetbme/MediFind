@@ -1,7 +1,8 @@
 // lib/features/provider_search/presentation/views/filter_view.dart
 //
 // Advanced filter screen for the MediFinder provider search feature.
-// Fully refactored to achieve 100% Multi-Theme Reactivity and strictly enforce Design Tokens.
+// Refactored to replace hard‑coded numeric values with design tokens
+// from AppSizes, AppColors, AppTypography, etc.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import 'package:medifinder/core/components/buttons/app_button.dart';
 import 'package:medifinder/core/components/chips/filter_chip_widget.dart';
 import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/core/theme/app_sizes.dart';
+import 'package:medifinder/core/theme/app_shadows.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enums.dart';
 import 'package:medifinder/features/provider_search/domain/enums/provider_enum_extensions.dart';
 import 'package:medifinder/features/provider_search/domain/entities/filter_criteria.dart';
@@ -166,8 +168,7 @@ class _FilterAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return AppBar(
       backgroundColor: AppColors.surface,
@@ -243,9 +244,11 @@ class _FilterScrollBody extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: AppSizes.borderThin),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowMedium.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.shadowMedium.withValues(
+              alpha: AppShadows.alphaLow,
+            ),
+            blurRadius: AppShadows.blurMedium,
+            offset: AppShadows.offsetMedium,
           ),
         ],
       ),
@@ -255,8 +258,7 @@ class _FilterScrollBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -328,15 +330,18 @@ class _CountryFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.public_rounded, size: 20, color: AppColors.primary),
+            Icon(
+              Icons.public_rounded,
+              size: AppSizes.filterIconSize,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: AppSizes.small),
             Text('Country', style: textTheme.titleMedium),
           ],
@@ -382,8 +387,7 @@ class _CityFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +396,7 @@ class _CityFilterSection extends StatelessWidget {
           children: [
             Icon(
               Icons.location_city_rounded,
-              size: 20,
+              size: AppSizes.filterIconSize,
               color: AppColors.primary,
             ),
             const SizedBox(width: AppSizes.small),
@@ -440,8 +444,7 @@ class _SpecialtyFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,7 +453,7 @@ class _SpecialtyFilterSection extends StatelessWidget {
           children: [
             Icon(
               Icons.local_hospital_rounded,
-              size: 20,
+              size: AppSizes.filterIconSize,
               color: AppColors.primary,
             ),
             const SizedBox(width: AppSizes.small),
@@ -480,8 +483,7 @@ class _ResultPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       padding: const EdgeInsets.all(AppSizes.stateWidgetSpacingTitle),

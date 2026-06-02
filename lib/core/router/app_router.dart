@@ -7,7 +7,6 @@ import 'package:medifinder/core/theme/app_colors.dart';
 import 'package:medifinder/features/provider_search/presentation/views/filter_view.dart';
 import 'package:medifinder/features/provider_search/presentation/views/provider_detail_view.dart';
 import 'package:medifinder/features/provider_search/presentation/views/provider_list_view.dart';
-import 'package:medifinder/features/provider_search/domain/entities/provider_entity.dart';
 
 /// Strongly-typed routes used across the MediFinder application to eliminate
 /// hard-coded string paths and parameters.
@@ -56,14 +55,11 @@ abstract final class AppRouter {
         name: AppRoute.providerDetail.name,
         pageBuilder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          final cachedProvider = state.extra as ProviderEntity?;
+          // Removed extra handling; provider data will be fetched by ID
 
           return CustomTransitionPage<void>(
             key: state.pageKey,
-            child: ProviderDetailView(
-              providerId: id,
-              cachedProvider: cachedProvider,
-            ),
+            child: ProviderDetailView(providerId: id),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);
