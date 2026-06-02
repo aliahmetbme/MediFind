@@ -106,26 +106,9 @@ Bu yaklaşım, sadece bir arayüz inşa etmenin ötesinde, ölçeklenebilir ve u
 
 ![Main Flow & Detail Screens](lib/core/screenshots/2.png)
 
-### MediFinder - Mobile Engineer Case Study Demo | UI/UX & State Management
+### Uygulama Videosu
 
-Açıklama:
-Bu video, MediFinder mobil uygulaması vaka çalışmasının (case study) teknik ve görsel arayüz demosudur. İstenen "production-ready" ve "pixel-perfect" standartlar doğrultusunda, uygulamanın mikro-etkileşimleri, asenkron durum (state) yönetimi ve hata senaryolarındaki davranışları gösterilmektedir.
-
-Uygulama, Clean Architecture ve Feature-based MVVM prensipleriyle geliştirilmiş olup, tüm tasarım token'ları (renk, tipografi, radius) merkezi bir sistemden yönetilmektedir.
-
-**Öne Çıkan Özellikler ve Zaman Damgaları:**
-
-0:00 - Shimmer Loading ve Premium UI: Uygulamanın başlatılması ve akıcı liste yükleme (micro-interactions) deneyimi.
-
-0:41 - Defensive Programming & Null Safety: Eksik veriye sahip (örneğin sadece e-posta adresi olan, telefon numarası olmayan) profillerde, uygulamanın çökmeden ve arayüz bütünlüğünü bozmadan (graceful degradation) çalışmaya devam etmesi.
-
-0:52 - Hiyerarşik Filtreleme Akışı: Kullanıcı bilişsel yükünü azaltmak amacıyla kurgulanan "Önce Ülke ➔ Sonra Şehir" bağımlı filtreleme mantığı ve çoklu seçim yönetimi.
-
-1:26 - Arama (Debounce) ve Empty State: Bulunamayan sonuçlarda kullanıcıyı çıkmaz sokakta bırakmayan, "Aramayı Temizle" aksiyonuna sahip eyleme dönüştürülebilir boş ekran (empty state) tasarımı.
-
-2:02 - Offline Senaryosu ve Retry Mekanizması: İnternet bağlantısı kesildiğinde görsel bütünlüğün (design tokens) korunması ve "Tekrar Dene" butonu ile durum (state) korumalı ağ kurtarma operasyonu.
-
-Projenin tüm kaynak kodlarına, mimari kararlara ve detaylı test stratejisine (Unit/Widget Tests) GitHub reposundaki README dosyasından ulaşabilirsiniz.
+Uygulamanın arayüz kalitesini, mikro-etkileşimlerini, hata ve asenkron durum (state) yönetimini (Shimmer Loading, Empty State, Offline Retry) gösteren kısa bir demo videosuna aşağıdan ulaşabilirsiniz.
 
 <a href="https://drive.google.com/file/d/1_C9gXYKwj9CQ_uqZG6UjuPpvPtEo-ZQw/view?usp=sharing">
   <img src="lib/core/screenshots/3..png" alt="Demo Video İzle" width="160"/>
