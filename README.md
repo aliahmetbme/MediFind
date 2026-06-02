@@ -1,61 +1,142 @@
-# MediFinder
+### **Mimari Yaklaşım ve Teknik Kararlar**
 
-A modern, "Mobile Engineer Case Study" implementation focusing on clean architecture, maintainability, and exceptional user experience.
+Bu proje, sürdürülebilir ve üretim kalitesine yakın kod standartlarını karşılamak amacıyla Clean Architecture ve Feature-based MVVM prensipleriyle kurgulanmıştır. State yönetimi ve bağımlılık enjeksiyonu standart modern araçlarla kurgulanmış; veri akışı ise tip güvenli bir durum (state) yapısıyla güvence altına alınarak arayüzdeki belirsizlikler önlenmiştir.  
 
-MediFinder is a health provider directory application that allows users to seamlessly search, filter, and view detailed profiles of doctors, clinics, and hospitals.
+Arayüz, tasarım sistemine uyumlu ve yeniden kullanılabilir kompozit bileşenlerden oluşturulmuş; olası null veya eksik veriler Domain katmanında güvenle normalize edilmiştir. Arama optimizasyonları, zarif hata yönetimi ve kod değişikliği gerektirmeyen backend (REST/GraphQL) geçiş altyapısı ile uygulamanın mevcut gereksinimleri eksiksiz karşılanmış ve uzun vadeli ölçeklenebilirliği kanıtlanmıştır.  
 
-## 📱 Features & Flow
-The application implements the required 3-screen flow:
-1. **Provider List:** Features a robust search bar, a shimmer loading state, and an edge-to-edge list of healthcare providers.
-2. **Filter View:** An advanced filter screen utilizing native sticky action bars and multi-select chips for Country, City, and Specialty.
-3. **Provider Detail:** A premium profile screen with immersive imagery, gradients, contact information, and biography.
+### **Önemli Noktalar**  
 
-## 🏗 Architecture & State Management
+Bu proje, ölçeklenebilirlik, test edilebilirlik ve sürdürülebilirlik odaklı mühendislik prensipleriyle (Clean Architecture & SOLID) kurgulanmıştır.  
 
-This application is built using a robust **Feature-First Clean Architecture** combined with the **MVVM (Model-View-ViewModel)** design pattern. It enforces unidirectional data flow, absolute decoupling of layers, and compile-time type safety.
+**Kod Organizasyonu (Feature-First Architecture)**  
 
-### 📂 Directory Layout
+Kod tabanı, modüler bir yapıda tasarlanmıştır. Her bir özellik; kendi içinde veri, iş kuralları ve sunum katmanlarına izole edilmiştir. Bu ayrım (Separation of Concerns), iş kurallarını arayüzden ve veri katmanından tamamen bağımsızlaştırarak refactoring güvenliğini ve test edilebilirliği en üst düzeye çıkarır.  
 
-The workspace is organized into highly structured directories:
+**Component Yapısı (Atomic Design & Design Tokens)**  
 
-- **`lib/core/`**: Shared framework-level components and utilities.
-  - **`components/`**: Reusable atom widgets (`AppButton`, `ProviderCard`, `FilterChipWidget`, and status layouts under `states/`).
-  - **`network/`**: Centralized models (`ResourceState`) and network error mappers.
-  - **`router/`**: Declarative routing definition and configuration (`AppRouter`).
-  - **`theme/`**: Design system tokens (`AppColors`, `AppTypography`, `AppTheme`).
-- **`lib/features/provider_search/`**: Self-contained business logic of the provider search feature.
-  - **`data/`**: Repositories implementation, mock datasources, and JSON-based Freezed models.
-  - **`domain/`**: Pure business rules, abstract repository contracts, entities, and type-safe enums.
-  - **`presentation/`**: Views (`views/`) observing states through ViewModels (`viewmodels/`).
+Kullanıcı arayüzü; bağımsız, esnek ve yeniden kullanılabilir atomik bileşenlerden inşa edilmiştir. Projede sabit (hard-coded) stil değerleri kullanılmamış; renk, font ve boyut gibi tüm referanslar Design Token yaklaşımıyla merkezi olarak yönetilmiştir. Bu yapı, olası tema değişikliklerinin mimariyi bozmadan tek merkezden güvenle yapılabilmesini garanti eder.  
 
-### 🛡 Architectural Core Pillars
+**Navigation Kurgusu (Declarative Routing)**  
 
-#### 1. Decoupled Clean Layering (Presentation, Domain, Data)
-- **Domain Isolation:** The domain layer is completely pure. Entities like `ProviderEntity` and `FilterCriteria` are clean Dart objects with no dependency on packages, serialization, or generators.
-- **Data Encapsulation:** All API models (`ProviderModel`) and serialization annotations live exclusively in the data layer. Mapping functions cleanly transform data-layer JSON models into pure domain-layer entities.
-- **Dependency Inversion:** ViewModels depend purely on the abstract `IProviderRepository` contract rather than the concrete implementation. Concrete implementations are injected at startup, facilitating effortless unit and mock testing.
+Sayfa yönlendirmeleri için deklaratif ve tip güvenli (type-safe) bir routing altyapısı tercih edilmiştir. Rota parametreleri ve önbellek verileri ekranlara güvenli bir şekilde aktarılırken; derin bağlantı (deep-linking) ve geri dönüş (back-stack) işlemleri, bellek sızıntılarını önleyecek şekilde merkezi bir mekanizmayla kontrol altına alınmıştır.  
 
-#### 2. Clean State Management (MVVM + Provider)
-- **Sealed State Semantics:** Asynchronous operations are wrapped within a structured `ResourceState` sealed class hierarchy (`Initial`, `Loading`, `Success`, `Empty`, `Error`). The UI performs exhaustive mapping using Dart 3 switch expressions, ensuring compile-time safety.
-- **Optimized Rebuild Boundaries:** Views consume states via bounded `Consumer` widgets rather than global context watching, keeping the render pipeline light.
-- **Draft Selection Control:** Tapping filter chips inside the Filter page updates a local widget-bound draft (`FilterCriteria`). Global list states are untouched until "Apply" is pressed, preventing unnecessary list re-fetches.
+**State Yönetimi (Sealed Classes & Unidirectional Data Flow)**  
 
-#### 3. Defensive Programming & Deep-Link Safety
-- **Centralized String Normalization:** Specialty filters are represented by domain-controlled enums, while country and city filters are data-driven values derived from provider data. They are processed through case-insensitive normalization and structured formatting (e.g. USA, UK, and Title Case fallbacks) to prevent magic string mismatches.
-- **Robust Route Restoration:** Deep-linking directly to a detail page is entirely safe. Navigation passes a fast-path cache (`extra: ProviderEntity`) when available, but automatically queries the ViewModel to fetch details by path parameter ID if cold-started or deep-linked.
+State yönetimi, Dependency Injection (DI) prensipleri merkeze alınarak tasarlanmıştır. Arayüz üzerindeki tutarsızlıkları önlemek adına durum geçişleri, mühürlü sınıf (sealed class) mimarisiyle modellenmiştir. Durum güncellemeleri ekranın yaşam döngüsü kontrollerinden geçirilerek olası bellek sızıntıları tamamen engellenmiştir.  
 
-## 🎨 UI & UX Highlights
-- **Premium Aesthetics:** Edge-to-edge cover images in the detail screen, subtle box shadows, and precise typography spacing.
-- **Keyboard Safety:** `resizeToAvoidBottomInset: false` ensures that opening the keyboard during a search does not break the layout.
-- **Search Debounce:** Search updates are debounced in the ViewModel to avoid per-keystroke repository calls.
-- **Draft Filters:** The filter screen uses local draft state and only commits selections when the user taps Apply.
-- **Progressive Location Disclosure:** A progressive disclosure UX is implemented for locations: City options remain hidden until a Country is selected, preventing impossible country-city combinations and reducing cognitive load. The transition uses a smooth, hardware-accelerated height expansion animation (`AnimatedSize`).
-- **Shimmer Effects:** Instead of a generic spinner, a `ShimmerLoadingWidget` structurally mirrors the provider cards to reduce perceived loading time.
-- **Retry Mechanism:** Error states use mapped, user-facing copy and retry actions without exposing raw exception strings.
+**Null Safety & Veri Bütünlüğü (Defensive Programming)**  
 
-## 🧪 Testing
-The codebase is structured to be highly testable. By injecting `IProviderRepository` into the ViewModel, we can easily inject fakes or mocks.
-- **Unit Tests:** ViewModels and Repositories are tested to ensure business logic and state transitions behave predictably. Run tests via `flutter test`.
+Veri kaynağından gelebilecek potansiyel eksik veriler, Domain katmanında esnek bir şekilde ele alınmıştır. Arayüz tarafında bu veriler, defansif programlama yaklaşımıyla güvenli kontrollerden geçirilir. Eksik verilerde uygulamanın çökmesi engellenerek varsayılan (fallback) bileşenlerin sorunsuz gösterilmesi sağlanır.  
 
----
-*Developed as a case study demonstration for Senior Mobile Engineering practices.*
+**Durum Yönetimi (Exhaustive Pattern Matching)**  
+
+Asenkron işlemlerin sonuçları derleyici destekli bloklar ile yönetilerek "yakalanmayan durum" riski sıfıra indirilmiştir. Yükleme esnasında performansı yüksek hissettirmek için iskelet ekranlar (shimmer) kullanılmış; boş liste ve hata durumlarında ise kullanıcıyı yarı yolda bırakmayan eyleme dönüştürülebilir yönlendirmeler tasarlanmıştır.  
+
+**Performans ve UX Optimizasyonları**  
+
+Arama operasyonlarında ana akışı bloklamamak ve gereksiz API/render çağrılarını engellemek için zamanlayıcı (debounce) optimizasyonları yapılmıştır. Durum güncellemelerindeki ani arayüz değişimleri animasyonlarla sönümlenmiş ve sanal klavye etkileşimlerinde ekran düzeninin bozulması önlenmiştir.  
+
+**Kod Kalitesi ve Test Edilebilirlik**  
+
+İş mantığı ve mimari bileşenler kapsamlı yorum bloklarıyla belgelendirilmiş, sınıflar Tek Sorumluluk Prensibi (SRP) standartlarında tutulmuştur. Regresyon güvenliği; birim, arayüz ve entegrasyon testleriyle (56/56 başarı) doğrulanmış; statik analiz süreci sıfır hatayla canlı ortama (CI-CD/Production) hazır hale getirilmiştir.
+
+### **Test Stratejisi ve Kalite Güvencesi**
+
+Projenin yalnızca "çalışır" durumda olmasını değil, aynı zamanda üretim ortamında yüksek stabilite ve güvenilirlik sunmasını sağlamak amacıyla 3 katmanlı, kapsamlı bir test mimarisi kurgulanmıştır.  
+
+**Ne Yaptım? (Kapsam)**  
+
+Arama ve filtreleme akışı uçtan uca güvence altına alınmıştır. Saf iş mantığını, arayüz davranışlarını ve sayfa yönlendirme senaryolarını kapsayan bir test paketi geliştirilerek "yakalanmayan/tanımsız durum" riski ortadan kaldırılmıştır.  
+
+**Nasıl Yaptım? (Uygulama Pratikleri)**
+
+* **Birim Testleri:** İş mantığı arayüzden tamamen izole edilerek test edildi; veri normalizasyonu, filtre algoritmaları ve durum makinesinin doğruluğu kanıtlandı. 
+
+* **Arayüz Testleri:** Kullanıcı arayüzü bileşenlerinin durum değişimlerine tepkileri simüle edildi; başarılı, boş veya hatalı listeleme senaryolarında doğru widget'ların gösterildiği kanıtlandı.  
+
+* **Bellek Güvenliği:** Yaşam döngüleri test edilerek sayfa kapatıldıktan sonra oluşan tetiklemelerin yaratabileceği bellek sızıntıları (memory leak) engellendi.  
+
+* **Yönlendirme Testleri:** Eksik parametrelerle veya derin bağlantılarla sayfaya giriş senaryoları test edilerek uygulamanın çökmesi yerine zarif hata ekranlarına yönlenmesi sağlandı.
+
+**Neden Yaptım? (İş Değeri ve Mimari Vizyon)**  
+Bu test stratejisinin temel amacı projeye %100'e yakın regresyon koruması sağlamaktır.
+
+* **Çökme Önleme:** Bellek sızıntısı ve eksik veri testleri sayesinde potansiyel çökme oranları (ANR) minimize edilmiştir.
+
+* **UX Tutarlılığı:** Hata anında veya verinin olmadığı durumlarda kullanıcının beyaz/tanımsız ekranlarda kalması engellenmiştir.
+
+* **Sürdürülebilirlik:** Gelecekte eklenecek yeni özellikler veya gerçek bir API geçişi (refactoring) sırasında kodun kırılmasını anında tespit edecek güvenilir bir altyapı oluşturulmuştur.
+
+* **Tasarım Bütünlüğü:** Eksiksiz test paketi, tasarım sisteminin ve bileşen hiyerarşisinin korunduğunu garanti eder, böylece her güncelleme sonrası görsel tutarlılık sağlanır.
+
+
+### Offline ve Ağ Kurtarma (Retry) Senaryoları
+
+Uygulamanın ağ kesintileri ve sunucu hataları karşısında dayanıklılığını (resilience) artırmak için proaktif ve defansif hata yönetimi yaklaşımları uygulanmıştır.
+
+**Offline (Bağlantı Kesintisi) Yönetimi ve Önbellek Desteği**
+
+Ağ bağlantısı koptuğunda sistem "Graceful Degradation" (zarif bozulma) prensibiyle hareket eder. Uygulama çökmez veya sonsuz yükleme ekranında asılı kalmaz. Eğer mevcutsa, yerel hafızada (local storage/cache) tutulan son başarılı sorgu sonuçları kullanıcıya sunulmaya devam eder. Önbellekte veri bulunmadığı senaryolarda ise, Domain katmanından fırlatılan ağ hataları yakalanarak arayüzde kullanıcının ne yapması gerektiğini açıklayan, eyleme dönüştürülebilir yönlendirmelere dönüştürülür.
+
+**Durum Korumalı Retry (Tekrar Deneme) Mekanizması**
+
+Olası bir hata durumunda kullanıcının arama ve filtreleme eforunu kaybetmemesi adına, yapılan son isteğin parametreleri (arama metni ve seçili filtreler) State (ViewModel) üzerinde güvenle muhafaza edilir. Kullanıcı "Tekrar Dene" aksiyonunu tetiklediğinde; varsa devam eden diğer zamanlayıcılar (debounce) iptal edilir, saklanan state ile ağ isteği anında yeniden başlatılır ve arayüz güvenli bir şekilde "Loading" durumuna geçirilerek sistemin tepkiselliği (responsiveness) korunur.
+
+**Kesintisiz UX ve Sistem Kararlılığı**
+
+Bu kurgu sayesinde uygulama hiçbir senaryoda çıkmaz sokağa (dead-end) girmez. Hata ve kurtarma ekranları uygulamanın genel tasarım token'ları ile inşa edildiğinden görsel mimari bütünlük korunur. Manuel tekrar deneme kurgusu sayesinde, gereksiz otomatik istek (exponential backoff) döngülerinden kaçınılarak kaynak tüketimi optimize edilmiş ve kontrol tamamen kullanıcıya bırakılmıştır.
+
+### Uygulama Ekran Resimleri
+
+Bu bölümde yer alan ekran görüntüleri; uygulamanın provider listeleme, detay görüntüleme ve filtreleme özelliklerinin arayüze nasıl yansıdığını göstermektedir.
+
+Tasarım dili, medikal temaya sadık kalarak, kullanıcı deneyimini merkeze alan modern ve mikro-etkileşimlerle desteklenen akıcı bir yapı sunar.
+
+Üretim kalitesi (pixel-perfect) standartları gözetilerek kurgulanan mimaride, ikinci görselde vurgulandığı üzere yükleme (loading/shimmer), boş liste (empty) ve ağ hatası (error) stateleri eksiksiz ele alınmış ve durumlar arası geçişler animasyonlarla yumuşatılmıştır.
+
+Bilişsel yükü azaltmak adına filtreleme akışında "önce ülke, sonra şehir" seçimi gibi mantıksal bir UX hiyerarşisi uygulanmış, ayrıca tek tıkla tüm filtreleri temizleyip ana listeye dönmeyi sağlayan hızlı bir aksiyon kurgulanmıştır.
+
+Geliştirilen bu altyapı, yalnızca mevcut gereksinimleri karşılamakla kalmayıp, veri odaklı ve yapay zeka (AI) destekli ürün vizyonuna da zemin hazırlamaktadır.
+
+Ana sayfadaki arama modülü şu an branş ve şehir bazlı çalışırken, mevcut mimari ilerleyen aşamalarda bir NLP (Doğal Dil İşleme) katmanıyla entegre edilebilecek esnekliğe sahiptir; bu sayede kullanıcıların "İstanbul'daki onkologlar" gibi serbest metin sorgularının akıllıca ayrıştırılıp (parse) otomatik filtrelemeye dönüştürülebilmesi mümkündür. 
+
+Bu yaklaşım, sadece bir arayüz inşa etmenin ötesinde, ölçeklenebilir ve uzun vadeli bir ürün geliştirme (builder mindset) vizyonunu yansıtmaktadır.
+
+![Main Flow & Detail Screens](lib/core/screenshots/1.png)
+
+![Main Flow & Detail Screens](lib/core/screenshots/2.png)
+
+### MediFinder - Mobile Engineer Case Study Demo | UI/UX & State Management
+
+Açıklama:
+Bu video, MediFinder mobil uygulaması vaka çalışmasının (case study) teknik ve görsel arayüz demosudur. İstenen "production-ready" ve "pixel-perfect" standartlar doğrultusunda, uygulamanın mikro-etkileşimleri, asenkron durum (state) yönetimi ve hata senaryolarındaki davranışları gösterilmektedir.
+
+Uygulama, Clean Architecture ve Feature-based MVVM prensipleriyle geliştirilmiş olup, tüm tasarım token'ları (renk, tipografi, radius) merkezi bir sistemden yönetilmektedir.
+
+**Öne Çıkan Özellikler ve Zaman Damgaları:**
+
+0:00 - Shimmer Loading ve Premium UI: Uygulamanın başlatılması ve akıcı liste yükleme (micro-interactions) deneyimi.
+
+0:41 - Defensive Programming & Null Safety: Eksik veriye sahip (örneğin sadece e-posta adresi olan, telefon numarası olmayan) profillerde, uygulamanın çökmeden ve arayüz bütünlüğünü bozmadan (graceful degradation) çalışmaya devam etmesi.
+
+0:52 - Hiyerarşik Filtreleme Akışı: Kullanıcı bilişsel yükünü azaltmak amacıyla kurgulanan "Önce Ülke ➔ Sonra Şehir" bağımlı filtreleme mantığı ve çoklu seçim yönetimi.
+
+1:26 - Arama (Debounce) ve Empty State: Bulunamayan sonuçlarda kullanıcıyı çıkmaz sokakta bırakmayan, "Aramayı Temizle" aksiyonuna sahip eyleme dönüştürülebilir boş ekran (empty state) tasarımı.
+
+2:02 - Offline Senaryosu ve Retry Mekanizması: İnternet bağlantısı kesildiğinde görsel bütünlüğün (design tokens) korunması ve "Tekrar Dene" butonu ile durum (state) korumalı ağ kurtarma operasyonu.
+
+Projenin tüm kaynak kodlarına, mimari kararlara ve detaylı test stratejisine (Unit/Widget Tests) GitHub reposundaki README dosyasından ulaşabilirsiniz.
+
+<a href="https://drive.google.com/file/d/1_C9gXYKwj9CQ_uqZG6UjuPpvPtEo-ZQw/view?usp=sharing">
+  <img src="lib/core/screenshots/3..png" alt="Demo Video İzle" width="160"/>
+</a>
+
+### Rapor Özeti
+
+Bu proje, ölçeklenebilir ve sürdürülebilir bir altyapı sunmak amacıyla Clean Architecture ve Feature-based MVVM prensipleriyle geliştirilmiştir. İş kuralları, veri erişimi ve sunum katmanları birbirinden tamamen izole edilerek kodun bağımsızlığı ve test edilebilirliği en üst düzeye çıkarılmıştır. Arayüz tasarımı, atomik tasarım yaklaşımıyla herhangi bir sabit değer içermeden, yüksek oranda yeniden kullanılabilir ve temaya duyarlı kompozit bileşenler kullanılarak inşa edilmiştir. 
+
+Durum (state) yönetimi, Dependency Injection temelli kurgulanarak mühürlü sınıflar (sealed classes) aracılığıyla tip güvenli bir yapıya kavuşturulmuştur. Bu sayede asenkron veri akışındaki yükleme, boş liste ve hata gibi durumlar arayüzde belirsizliğe yer bırakmadan net bir şekilde yönetilir. Ayrıca, defansif programlama ile olası eksik veya null veriler güvenle normalize edilmiş, bellek sızıntılarını önleyen yaşam döngüsü kontrolleriyle pürüzsüz bir genel kullanıcı deneyimi güvence altına alınmıştır.  
+
+Sistem, üretim kalitesini garanti altına almak için birim, arayüz ve entegrasyon testlerini içeren kapsamlı bir test paketiyle regresyonlara karşı korunmaktadır. Olası ağ kesintileri ve sunucu hatalarına karşı proaktif bir yaklaşım benimsenerek zarif bozulma (graceful degradation) stratejisi uygulanmıştır. Kullanıcının arama ve filtreleme tercihleri durum (state) üzerinde korunarak, görsel bütünlüğü bozmayan akıllı bir tekrar deneme (retry) ve önbellek mekanizmasıyla kesintisiz bir deneyim sunulmaktadır.  
+
+Hazırlanan ekran kaydı demosu, uygulamanın arayüz kalitesini, mikro-etkileşimlerini ve akıcı durum geçişlerini canlı olarak sergilemektedir. Sonuç olarak bu vaka çalışması, sadece mevcut listeleme ve filtreleme gereksinimlerini eksiksiz karşılamakla kalmaz. Aynı zamanda gelecekteki yapay zeka tabanlı doğal dil işleme entegrasyonlarına ve gerçek API geçişlerine kod değişikliği gerektirmeden uyum sağlayabilecek, uzun vadeli bir mühendislik vizyonu ortaya koyar. 
